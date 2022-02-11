@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+const { getSequenceNextValue, insertCounter } = require('./sequence')
 
 const AddressSchema = mongoose.Schema({
     city: String,
@@ -22,7 +23,10 @@ var EmployeeSchema = new mongoose.Schema({
     lastName: String,
     email: String,
     connectInfo: ContactInfoSchema,
-    RecordID: Number,
+    EmployeeId: {
+        type: Number,
+        required: false,
+    },
 })
 
 const EmployeeSchemaModel = mongoose.model(
@@ -30,5 +34,28 @@ const EmployeeSchemaModel = mongoose.model(
     EmployeeSchema,
     'Employees'
 )
+
+EmployeeSchema.pre('save', (next) => {
+    // let doc = this
+    console.log('inside pre')
+    next()
+    // getSequenceNextValue('user_id')
+    //     .then((counter) => {
+    //         console.log('asdasd', counter)
+    //         if (!counter) {
+    //             insertCounter('user_id')
+    //                 .then((counter) => {
+    //                     doc.EmployeeId = counter
+    //                     console.log(doc)
+    //                     next()
+    //                 })
+    //                 .catch((error) => next(error))
+    //         } else {
+    //             doc.EmployeeId = counter
+    //             next()
+    //         }
+    //     })
+    //     .catch((error) => next(error))
+})
 
 module.exports = EmployeeSchemaModel

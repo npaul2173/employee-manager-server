@@ -25,7 +25,7 @@ router.post('/save', function (req, res) {
     var employeeModel = new EmployeeModel()
     employeeModel.firstName = req.body.firstName
     employeeModel.lastName = req.body.lastName
-    employeeModel.RecordID = 1
+    employeeModel.EmployeeId = 1
     employeeModel.connectInfo = {
         tel: [req.body.tel],
         email: [req.body.email],
@@ -40,10 +40,28 @@ router.post('/save', function (req, res) {
 
     employeeModel.save(function (err, data) {
         if (err) {
-            console.log(error)
+            console.log(err)
         } else {
             res.send('Data inserted')
         }
+    })
+})
+
+router.put('/update', (req, res) => {
+    // create mongose method to update a existing record into collection
+    let _id = req.body.employee_id
+    var data = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+    }
+
+    // save the user
+    EmployeeModel.findByIdAndUpdate(_id, data, (err, employee) => {
+        if (err)
+            res.status(400).send(
+                `Error deleting listing with id , Error-> ${err}`
+            )
+        res.send('Successfully! Employee updated - ' + employee.firstName)
     })
 })
 
