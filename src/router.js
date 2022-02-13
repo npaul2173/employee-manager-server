@@ -1,25 +1,6 @@
-var mongoose = require('mongoose')
-var express = require('express')
+const express = require('express')
 var router = express.Router()
 var EmployeeModel = require('./models/employeeSchema')
-
-// mongoose.Promise = global.Promise;
-
-mongoose.connect(
-    'mongodb://localhost:27017/usersdb',
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    function (error) {
-        if (error) {
-            console.log('Error!' + error)
-        }
-    }
-)
-
-const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error: '))
-db.once('open', function () {
-    console.log('Connected successfully')
-})
 
 router.post('/save', function (req, res) {
     var employeeModel = new EmployeeModel()
