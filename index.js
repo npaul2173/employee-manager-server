@@ -3,9 +3,13 @@ const path = require('path')
 // const __dirname = path.dirname(__filename)
 const bodyParser = require('body-parser')
 const indexRouter = require('./src/routers')
-const api = require('./src/routers/router')
+const employeeRouter = require('./src/routers/router')
+const api = require('./src/routers/api')
 const cors = require('cors')
-const { notFoundResponse } = require('./src/controllers/apiResponse')
+const {
+    notFoundResponse,
+    unauthorizedResponse,
+} = require('./src/helpers/apiResponse')
 const mongoose = require('mongoose')
 const { MONGODB_URL, SERVER_PORT } = require('./src/config')
 
@@ -40,10 +44,21 @@ app.use(
 )
 app.set('views', path.join(__dirname, 'src/views'))
 app.set('view engine', 'pug')
+
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
 app.use('/', indexRouter)
 app.use('/api', api)
+app.use('/employee', employeeRouter)
+
+// throw 404 if URL not found
 app.all('*', function (req, res) {
     return notFoundResponse(res, 'Page not found')
+})
+
+app.use((err, req, res) => {
+    if (err.name == 'UnauthorizedError') {
+        return unauthorizedResponse(res, err.message)
+    }
 })
